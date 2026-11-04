@@ -1,52 +1,51 @@
-import cv2
-from ultralytics import YOLO
+"""
+listar_cameras.py - Descobre o número de cada câmera conectada ao computador.
+
+Uso:
+  python listar_cameras.py
+
+Cada câmera encontrada aparece numa janela por alguns segundos, com o número dela
+escrito na imagem. Use esse número no parâmetro --fonte dos outros scripts.
+"""
+
 import time
 
-# Carrega o modelo YOLO (versão leve e rápida)
-model = YOLO("yolov8n.pt")
+import cv2
 
-# Abre a webcam (0 = câmera padrão)
-cap = cv2.VideoCapture(0)
+print("Procurando câmeras (0 a 4)...\n")
+encontradas = []
 
-# Variável para cálculo de FPS
-prev_time = 0
+for indice in range(5):
+    cap = cv2.VideoCapture(indice, cv2.CAP_DSHOW)
+    ok, frame = False, None
+    if cap.isOpened():
+        for _ in range(30):
+            ok, frame = cap.read()
+            if ok:
+                break
+            time.sleep(0.1)
+    if not ok:
+        print(f"Câmera {indice}: não encontrada")
+        cap.release()
+        continue
 
-while True:
-    ret, frame = cap.read()
-    
-    if not ret:
-        print("Erro ao acessar a câmera")
-        break
+    h, w = frame.shape[:2]
+    preta = frame.mean() < 10
+    situacao = "IMAGEM PRETA (bloqueada ou em uso)" if preta else "funcionando"
+    print(f"Câmera {indice}: {w}x{h} - {situacao}")
+    encontradas.append(indice)
 
-    # Faz a detecção
-    results = model(frame)
+    inicio = time.time()
+    while time.time() - inicio < 5:
+        ok, frame = cap.read()
+        if not ok:
+            break
+        cv2.putText(frame, f"CAMERA {indice}  (use --fonte {indice})", (20, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+        cv2.imshow("Teste de cameras - aguarde", frame)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
 
-    # Desenha os resultados no frame
-    annotated_frame = results[0].plot()
-
-    # Cálculo de FPS
-    current_time = time.time()
-    fps = 1 / (current_time - prev_time) if prev_time != 0 else 0
-    prev_time = current_time
-
-    # Exibe o FPS na tela
-    cv2.putText(
-        annotated_frame,
-        f"FPS: {int(fps)}",
-        (20, 40),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        1,
-        (0, 255, 0),
-        2
-    )
-
-    # Mostra o vídeo
-    cv2.imshow("Detecção de Objetos - YOLO", annotated_frame)
-
-    # Pressione 'q' para sair
-    if cv2.waitKey(1) & 0xFF == ord("q"):
-        break
-
-# Libera a câmera
-cap.release()
-cv2.destroyAllWindows()
+print(f"\nCâmeras com sinal: {encontradas if encontradas else 'nenhuma'}")
