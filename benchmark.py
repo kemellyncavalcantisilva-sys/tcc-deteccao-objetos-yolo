@@ -1,6 +1,6 @@
 """
 benchmark.py - Avaliação de desempenho de modelos YOLO (TCC)
-Autora: Kemellyn Cavalcanti da Silva
+Autora: Kemellyn Cavalcanti 
 
 Mede, para cada modelo, a velocidade de processamento (FPS e latência) e o
 comportamento das detecções sobre a MESMA fonte de vídeo, salvando tudo em CSV
