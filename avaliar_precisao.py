@@ -1,5 +1,5 @@
 """
-avaliar_precisao.py - Precisão, Recall e mAP dos modelos YOLO (TCC)
+avaliar_precisao.py - Precisão, Recall e mAP dos modelos YOLO
 
 Precisão só pode ser medida com imagens ROTULADAS (ground truth).
 Recebe o arquivo data.yaml de um conjunto anotado no formato YOLO.
