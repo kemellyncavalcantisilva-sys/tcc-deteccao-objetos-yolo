@@ -1,6 +1,5 @@
 """
 gravar_video.py - Grava um vídeo de teste com a webcam (TCC)
-
 Todos os modelos serão avaliados sobre o MESMO vídeo gravado, garantindo uma
 comparação justa e reproduzível (com a webcam ao vivo, a cena muda a cada teste).
 
