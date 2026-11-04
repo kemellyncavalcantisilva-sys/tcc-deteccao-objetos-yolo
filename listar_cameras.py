@@ -1,6 +1,5 @@
 """
 listar_cameras.py - Descobre o número de cada câmera conectada ao computador.
-
 Uso:
   python listar_cameras.py
 
